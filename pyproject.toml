@@ -1,0 +1,17 @@
+[project]
+name = "pjyk-admin-cli"
+version = "0.1.0"
+description = "Local CLI tool for managing Project Yuki anime and mapping data via Admin REST API"
+readme = "README.md"
+requires-python = ">=3.9"
+dependencies = []
+
+[project.scripts]
+pjyk-admin = "pjyk_admin.cli:main"
+
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["src"]
