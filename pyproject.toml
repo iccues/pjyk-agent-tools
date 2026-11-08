@@ -1,13 +1,17 @@
 [project]
-name = "pjyk-admin-cli"
+name = "pjyk-agent-tools"
 version = "0.1.0"
-description = "Local CLI tool for managing Project Yuki anime and mapping data via Admin REST API"
+description = "CLI and MCP tools for managing Project Yuki anime and platform mappings"
 readme = "README.md"
 requires-python = ">=3.9"
 dependencies = []
 
+[project.optional-dependencies]
+mcp = ["mcp>=1.16,<2"]
+
 [project.scripts]
 pjyk-admin = "pjyk_admin.cli:main"
+pjyk-admin-mcp = "pjyk_admin.mcp_server:main"
 
 [build-system]
 requires = ["setuptools"]

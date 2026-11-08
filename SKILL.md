@@ -1,21 +1,25 @@
 ---
-name: anime-data-manager
+name: pjyk-agent-tools
 description: >-
   Manage, link, merge, complete multilingual titles, and auto-review Project Yuki (有希计划)
-  anime and platform mapping data via the local Admin CLI (`pjyk_admin.py`).
+  anime and platform mapping data via the pjyk-agent-tools MCP server or local CLI (`pjyk_admin.py`).
   Activate this skill whenever the user asks to process, review, link, merge, translate,
   or inspect anime/mapping data in the admin backend.
 ---
 
-# Project Yuki Anime Data Manager Skill
+# Project Yuki Agent Tools
 
-This skill equips you to manage Project Yuki's anime and external platform mapping data (`Bangumi`, `AniList`, `MyAnimeList`) by invoking the zero-dependency local CLI [`pjyk_admin.py`](./pjyk_admin.py), which talks to the Spring Boot Admin REST API (`/api/admin/*`).
+This skill equips you to manage Project Yuki's anime and external platform mapping data (`Bangumi`, `AniList`, `MyAnimeList`) through MCP or the local CLI [`pjyk_admin.py`](./pjyk_admin.py). Both use the Spring Boot Admin REST API (`/api/admin/*`).
 
 ---
 
-## 1. CLI Quick Reference
+## 1. MCP and CLI Quick Reference
 
-Always invoke the CLI directly with `python3 pjyk_admin.py` from the CLI repository root:
+With the `pjyk-agent-tools` MCP server connected, call `status`, `dump`, `animes`, `unlinked`, `update_anime`, `link_mapping`, `merge_anime`, `apply`, or `task` directly. Tool arguments use snake_case. For batches, pass the action array from section 2 as `actions` and set `dry_run` to preview it. Action fields retain their JSON names (e.g. `animeId`). Read partial results before retrying a failed batch.
+
+### CLI usage
+
+When using the CLI, invoke `python3 pjyk_admin.py` from the CLI repository root:
 
 ### Read / Inspect Commands
 ```bash

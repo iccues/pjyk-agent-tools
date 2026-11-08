@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import ipaddress
 import json
 import os
 import urllib.error
@@ -33,6 +34,22 @@ class AdminApiError(RuntimeError):
         self.code = code
 
 
+class _AdminProxyHandler(urllib.request.ProxyHandler):
+    """Connect directly to loopback backends, even with a system-wide proxy."""
+
+    def proxy_open(self, req, proxy, scheme):
+        host = urllib.parse.urlsplit(req.full_url).hostname or ""
+        if host.rstrip(".").lower() == "localhost":
+            return None
+        try:
+            address = ipaddress.ip_address(host)
+        except ValueError:
+            address = None
+        if address is not None and address.is_loopback:
+            return None
+        return super().proxy_open(req, proxy, scheme)
+
+
 class AdminApiClient:
     """HTTP client for Project Yuki's `/api/admin/*` endpoints."""
 
@@ -51,6 +68,7 @@ class AdminApiClient:
         self.base_url = resolved_url.rstrip("/")
         self.token = token if token is not None else os.getenv("PJYK_ADMIN_TOKEN", "").strip()
         self.timeout = timeout
+        self._opener = urllib.request.build_opener(_AdminProxyHandler())
 
     def _request(
         self,
@@ -81,7 +99,7 @@ class AdminApiClient:
         req = urllib.request.Request(url, data=data_bytes, headers=headers, method=method)
 
         try:
-            with urllib.request.urlopen(req, timeout=self.timeout) as resp:
+            with self._opener.open(req, timeout=self.timeout) as resp:
                 raw = resp.read().decode("utf-8")
                 if not raw:
                     return None
@@ -102,7 +120,7 @@ class AdminApiClient:
             ) from exc
         except urllib.error.URLError as exc:
             raise AdminApiError(
-                f"Failed to connect to {url}: {exc.reason}. Is pjyk-server running?"
+                f"Failed to connect to {url}: {exc.reason}"
             ) from exc
 
         if isinstance(payload, dict) and "success" in payload:
